@@ -7,9 +7,11 @@ import { Invitation, InvitationStatus } from '../../../domain/model/invitation';
 export class PrismaInvitationRepository implements IInvitationRepository {
   private prisma = new PrismaClient();
 
-  async save(invitation: Invitation): Promise<void> {
-    await this.prisma.invitation.create({
-      data: {
+ async save(invitation: Invitation): Promise<void> {
+    await this.prisma.invitation.upsert({
+      where: { id: invitation.getId() },
+      update: { status: invitation.getStatus() }, // Allow status updates
+      create: {
         id: invitation.getId(),
         email: invitation.getEmail(),
         token: invitation.getToken(),

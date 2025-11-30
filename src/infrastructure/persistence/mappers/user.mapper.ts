@@ -11,6 +11,7 @@ export class UserMapper {
       raw.role as UserRole, // Cast string to Enum
       raw.isActive,
       raw.createdAt,
+       raw.managerId,
     );
   }
 
@@ -24,6 +25,7 @@ export class UserMapper {
       isActive: domain.getIsActive(),
       createdAt: new Date(), // In update scenarios this might be ignored by Prisma
       updatedAt: new Date(),
+      managerId: domain.getManagerId() || null,
     };
   }
 }

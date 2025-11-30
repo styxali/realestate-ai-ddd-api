@@ -18,6 +18,7 @@ export class User {
     private role: UserRole,
     private isActive: boolean,
     private createdAt: Date,
+    private readonly managerId?: string | null,
   ) {}
 
   // Factory method to create a NEW user (cleaner than new User(...))
@@ -33,10 +34,20 @@ export class User {
   }
 
   // Method to reconstitute user from DB (Infrastructure -> Domain)
-  static restore(id: string, email: string, passwordHash: string, role: UserRole, isActive: boolean, createdAt: Date): User {
-    return new User(id, email, passwordHash, role, isActive, createdAt);
+  static restore(id: string, email: string, passwordHash: string, role: UserRole, isActive: boolean, createdAt: Date,managerId?: string | null): User {
+    return new User(id, email, passwordHash, role, isActive, createdAt, managerId);
   }
-
+  static createAgent(email: string, passwordHash: string, managerId: string): User {
+    return new User(
+      crypto.randomUUID(),
+      email,
+      passwordHash,
+      UserRole.AGENT, // Forced role
+      true,
+      new Date(),
+      managerId, // Link to Boss
+    );
+  }
   // Business Logic: Check capabilities
   isAdmin(): boolean {
     return this.role === UserRole.ADMIN;
@@ -52,4 +63,5 @@ export class User {
   getPasswordHash(): string { return this.passwordHash; }
   getRole(): UserRole { return this.role; }
   getIsActive(): boolean { return this.isActive; }
+  getManagerId(): string | null | undefined { return this.managerId; }
 }

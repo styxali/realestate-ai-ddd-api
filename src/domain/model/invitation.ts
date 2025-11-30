@@ -26,8 +26,15 @@ export class Invitation {
       new Date(),
     );
   }
-
+markAccepted(): void {
+    if (this.status !== InvitationStatus.PENDING) {
+      throw new Error('Invitation is no longer valid');
+    }
+    this.status = InvitationStatus.ACCEPTED;
+  }
+  
   // Getters
+  getStatus(): InvitationStatus { return this.status; }
   getId() { return this.id; }
   getEmail() { return this.email; }
   getToken() { return this.token; }
