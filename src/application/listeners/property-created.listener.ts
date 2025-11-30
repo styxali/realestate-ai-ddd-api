@@ -1,36 +1,31 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { PropertyCreatedEvent } from '../../domain/events/property-created.event';
-import { IAIService } from '../ports/ai.service.interface';
-import { IVectorStore } from '../ports/vector-store.interface';
+import { EmbeddingJobData } from '../jobs/embedding.processor';
 
 @Injectable()
 export class PropertyCreatedListener {
   private readonly logger = new Logger(PropertyCreatedListener.name);
 
   constructor(
-    @Inject('IAIService') private readonly aiService: IAIService,
-    @Inject('IVectorStore') private readonly vectorStore: IVectorStore,
+    @InjectQueue('embedding-queue') private readonly embeddingQueue: Queue,
   ) {}
 
-  @OnEvent('property.created', { async: true })
+  @OnEvent('property.created')
   async handlePropertyCreatedEvent(event: PropertyCreatedEvent) {
-    this.logger.log(`Processing embedding for property: ${event.propertyId}`);
+    this.logger.log(`Event received. Dispatching Job to Queue for property: ${event.propertyId}`);
 
-    try {
-      // 1. Prepare text for embedding (Combine title + desc)
-      const textToEmbed = `Title: ${event.title}. Description: ${event.description}`;
-
-      // 2. Generate Vector (Calls OpenAI or Mock)
-      const vector = await this.aiService.generateEmbedding(textToEmbed);
-
-      // 3. Save to Vector DB
-      await this.vectorStore.savePropertyVector(event.propertyId, vector, textToEmbed);
-
-      this.logger.log(`Successfully indexed property ${event.propertyId} for RAG.`);
-    } catch (error) {
-      this.logger.error(`Failed to generate embedding for property ${event.propertyId}`, error);
-      // In a real app, you might want to add a retry mechanism or Dead Letter Queue here
-    }
+    // Add job to Redis
+    await this.embeddingQueue.add('generate-embedding', {
+      propertyId: event.propertyId,
+      title: event.title,
+      description: event.description,
+    } as EmbeddingJobData, {
+      attempts: 3, // Retry 3 times on failure
+      backoff: 5000, // Wait 5 seconds between retries
+      removeOnComplete: true, // Don't clog Redis with success logs
+    });
   }
 }
