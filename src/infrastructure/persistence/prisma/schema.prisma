@@ -9,7 +9,14 @@ datasource db {
   
 }
 
-// Just a placeholder to ensure Prisma works for now
-model HealthCheck {
-  id Int @id @default(autoincrement())
+model User {
+  id        String   @id // UUID strings
+  email     String   @unique
+  password  String
+  role      String   // Storing Enum as string for flexibility
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users") // Best practice: lowercase table names in Postgres
 }
