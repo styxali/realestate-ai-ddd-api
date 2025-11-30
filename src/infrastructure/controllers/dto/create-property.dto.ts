@@ -1,11 +1,7 @@
 import { IsNotEmpty, IsNumber, IsString, IsUUID, Min, MinLength } from 'class-validator';
 
 export class CreatePropertyRequest {
-  // In a fully secured app, ownerId usually comes from the JWT Token.
-  // For this milestone, we accept it in the body to test the relationship easily.
-  @IsUUID()
-  @IsNotEmpty()
-  ownerId: string;
+ 
 
   @IsString()
   @MinLength(5, { message: 'Title is too short' })

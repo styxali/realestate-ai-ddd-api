@@ -21,6 +21,6 @@ controllers: [UserController],
     // We need to register the Repo itself if it relies on Prisma (simplified here)
     PrismaUserRepository, 
   ],
-  exports: [CreateUserUseCase], // Export UseCase so Controllers can use it
+  exports: [CreateUserUseCase,'IUserRepository', 'IPasswordService'], // Export UseCase so Controllers can use it
 })
 export class UserModule {}
