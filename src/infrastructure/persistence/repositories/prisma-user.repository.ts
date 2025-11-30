@@ -1,8 +1,8 @@
 // src/infrastructure/persistence/repositories/prisma-user.repository.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { IUserRepository } from '../../../../domain/repositories/user.repository.interface';
-import { User } from '../../../../domain/model/user';
+import { IUserRepository } from '../../../domain/repositories/user.repository.interface';
+import { User } from '../../../domain/model/user';
 import { UserMapper } from '../mappers/user.mapper';
 
 @Injectable()
