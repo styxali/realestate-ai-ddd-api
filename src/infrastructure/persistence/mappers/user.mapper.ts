@@ -17,6 +17,7 @@ export class UserMapper {
   static toPersistence(domain: User): PrismaUser {
     return {
       id: domain.getId(),
+      
       email: domain.getEmail(),
       password: domain.getPasswordHash(),
       role: domain.getRole(),

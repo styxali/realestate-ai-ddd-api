@@ -22,7 +22,25 @@ model User {
   properties Property[] // Relation
   refreshTokens RefreshToken[]
 
+  // Team Hierarchy
+  managerId     String?  // If set, this user is an Agent working for this Manager (Owner)
+  manager       User?    @relation("TeamHierarchy", fields: [managerId], references: [id])
+  agents        User[]   @relation("TeamHierarchy")
+
+  // Relations
+  sentInvitations Invitation[]
   @@map("users") // Best practice: lowercase table names in Postgres
+}
+model Invitation {
+  id        String   @id @default(uuid())
+  email     String
+  token     String   @unique // The secret code sent in email
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  status    String   @default("PENDING") // PENDING, ACCEPTED, EXPIRED
+  createdAt DateTime @default(now())
+  
+  @@map("invitations")
 }
 model RefreshToken {
   id        String   @id @default(uuid())
