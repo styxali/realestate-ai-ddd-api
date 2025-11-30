@@ -6,6 +6,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthModule } from './infrastructure/ioc/auth.module';
 import { TeamModule } from './infrastructure/ioc/team.module';
 import { AIModule } from './infrastructure/ioc/ai.module';
+import { AdminModule } from './infrastructure/ioc/admin.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -16,6 +17,7 @@ import { AIModule } from './infrastructure/ioc/ai.module';
       },
     }),
     AuthModule,
+    AdminModule,
     UserModule,
     PropertyModule,
     TeamModule,

@@ -70,6 +70,7 @@ const AIProviderFactory = {
     ListPropertiesUseCase,
     'IAIService', 
     'IVectorStore',
+    'IPropertyRepository',
     BullModule,
 ],
 })

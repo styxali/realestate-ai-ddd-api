@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { IVectorStore, VectorSearchResult } from '../../../../application/ports/vector-store.interface';
+import { IVectorStore, VectorSearchResult } from '../../../application/ports/vector-store.interface';
 
 @Injectable()
 export class PrismaVectorStore implements IVectorStore {

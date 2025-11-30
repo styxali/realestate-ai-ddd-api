@@ -37,4 +37,5 @@ export class PrismaPropertyRepository implements IPropertyRepository {
     const raw = await this.prisma.property.findMany({ where: { ownerId } });
     return raw.map(PropertyMapper.toDomain);
   }
+  async count(): Promise<number> { return this.prisma.property.count(); }
 }

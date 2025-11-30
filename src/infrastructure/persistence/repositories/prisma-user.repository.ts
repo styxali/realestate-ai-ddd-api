@@ -35,4 +35,6 @@ export class PrismaUserRepository implements IUserRepository {
     const raw = await this.prisma.user.findMany();
     return raw.map(UserMapper.toDomain);
   }
+  async count(): Promise<number> { return this.prisma.user.count(); }
+
 }

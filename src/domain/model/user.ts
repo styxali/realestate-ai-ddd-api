@@ -56,7 +56,8 @@ export class User {
   isOwner(): boolean {
     return this.role === UserRole.OWNER;
   }
-
+deactivate() { this.isActive = false; }
+  activate() { this.isActive = true; }
   // Getters
   getId(): string { return this.id; }
   getEmail(): string { return this.email; }
