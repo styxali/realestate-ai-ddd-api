@@ -1,0 +1,15 @@
+// src/infrastructure/persistence/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Change this to "postgresql" via ENV in prod, or keep dynamic logic
+  
+}
+
+// Just a placeholder to ensure Prisma works for now
+model HealthCheck {
+  id Int @id @default(autoincrement())
+}
