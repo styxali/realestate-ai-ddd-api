@@ -38,10 +38,7 @@ const AIProviderFactory = {
       provide: 'IPropertyRepository',
       useClass: PrismaPropertyRepository,
     },
-    {
-      provide: 'IAIService',
-      useClass: MockAIService, // We will swap this later!
-    },
+    AIProviderFactory,
     {
       provide: 'IVectorStore',
       useClass: MockVectorStore, // We will swap this later!
