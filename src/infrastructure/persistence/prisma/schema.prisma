@@ -20,10 +20,20 @@ model User {
   updatedAt DateTime @updatedAt
 
   properties Property[] // Relation
-  
+  refreshTokens RefreshToken[]
+
   @@map("users") // Best practice: lowercase table names in Postgres
 }
+model RefreshToken {
+  id        String   @id @default(uuid())
+  tokenHash String   // We store the Hash, not the plain token
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 
+  @@map("refresh_tokens")
+}
 model Property {
   id          String   @id
   ownerId     String

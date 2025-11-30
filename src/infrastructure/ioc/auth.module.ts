@@ -6,6 +6,8 @@ import { LoginUserUseCase } from '../../application/use-cases/login-user.use-cas
 import { AuthController } from '../controllers/auth.controller';
 import { JwtTokenService } from '../adapters/jwt.service';
 import { JwtStrategy } from '../auth/jwt.strategy';
+import { RefreshTokenUseCase } from 'src/application/use-cases/refresh-token.use-case';
+import { PrismaRefreshTokenRepository } from '../persistence/repositories/prisma-refresh-token.repository';
 
 @Module({
   imports: [
@@ -19,6 +21,11 @@ import { JwtStrategy } from '../auth/jwt.strategy';
   controllers: [AuthController],
   providers: [
     LoginUserUseCase,
+    RefreshTokenUseCase,
+    {
+      provide: 'IRefreshTokenRepository',
+      useClass: PrismaRefreshTokenRepository,
+    },
     JwtStrategy,
     {
       provide: 'ITokenService',
