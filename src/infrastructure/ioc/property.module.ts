@@ -4,8 +4,9 @@ import { PrismaPropertyRepository } from '../persistence/repositories/prisma-pro
 import { PropertyCreatedListener } from '../../application/listeners/property-created.listener';
 import { MockAIService } from '../adapters/mock-ai.service';
 import { MockVectorStore } from '../adapters/mock-vector-store';
-
+import { PropertyController } from '../controllers/property.controller';
 @Module({
+  controllers: [PropertyController],
   providers: [
     CreatePropertyUseCase,
     PropertyCreatedListener,
