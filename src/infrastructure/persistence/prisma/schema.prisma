@@ -1,36 +1,39 @@
 // src/infrastructure/persistence/prisma/schema.prisma
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "sqlite" // Change this to "postgresql" via ENV in prod, or keep dynamic logic
-  url      = env("DATABASE_URL")
-
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
 }
 
 model User {
   id        String   @id // UUID strings
   email     String   @unique
   password  String
-  role      String   // Storing Enum as string for flexibility
+  role      String // Storing Enum as string for flexibility
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  properties Property[] // Relation
+  properties    Property[] // Relation
   refreshTokens RefreshToken[]
 
   // Team Hierarchy
-  managerId     String?  // If set, this user is an Agent working for this Manager (Owner)
-  manager       User?    @relation("TeamHierarchy", fields: [managerId], references: [id])
-  agents        User[]   @relation("TeamHierarchy")
+  managerId String? // If set, this user is an Agent working for this Manager (Owner)
+  manager   User?   @relation("TeamHierarchy", fields: [managerId], references: [id])
+  agents    User[]  @relation("TeamHierarchy")
 
   // Relations
   sentInvitations Invitation[]
+
   @@map("users") // Best practice: lowercase table names in Postgres
 }
+
 model Invitation {
   id        String   @id @default(uuid())
   email     String
@@ -39,12 +42,13 @@ model Invitation {
   owner     User     @relation(fields: [ownerId], references: [id])
   status    String   @default("PENDING") // PENDING, ACCEPTED, EXPIRED
   createdAt DateTime @default(now())
-  
+
   @@map("invitations")
 }
+
 model RefreshToken {
   id        String   @id @default(uuid())
-  tokenHash String   // We store the Hash, not the plain token
+  tokenHash String // We store the Hash, not the plain token
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
@@ -52,15 +56,29 @@ model RefreshToken {
 
   @@map("refresh_tokens")
 }
+
 model Property {
-  id          String   @id
-  ownerId     String
-  owner       User     @relation(fields: [ownerId], references: [id])
-  title       String
-  description String
-  price       Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String             @id
+  ownerId           String
+  owner             User               @relation(fields: [ownerId], references: [id])
+  title             String
+  description       String
+  price             Float
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  propertyEmbedding PropertyEmbedding?
 
   @@map("properties")
+}
+
+model PropertyEmbedding {
+  id         String   @id @default(uuid())
+  propertyId String   @unique // One embedding per property
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  content    String // The text chunk we embedded (Context for RAG)
+
+  // Unsupported type allows us to map raw SQL types Prisma doesn't fully type-check yet
+  vector Unsupported("vector(1536)")
+
+  @@map("property_embeddings")
 }

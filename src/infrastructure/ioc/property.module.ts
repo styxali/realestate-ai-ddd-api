@@ -8,7 +8,23 @@ import { PropertyController } from '../controllers/property.controller';
 import { ListPropertiesUseCase } from '../../application/use-cases/list-properties.use-case';
 import { OpenAIService } from '../adapters/openai.service';
 import { GeminiService } from '../adapters/gemini.service';
+import { PrismaVectorStore } from '../persistence/repositories/prisma-vector-store';
 
+const VectorStoreFactory = {
+  provide: 'IVectorStore',
+  useFactory: () => {
+    const dbUrl = process.env.DATABASE_URL || '';
+    
+    // Simple heuristic: If URL contains 'postgres', assumes we have vector support
+    if (dbUrl.includes('postgres') || dbUrl.includes('neon')) {
+      console.log('Using Real PgVector Store');
+      return new PrismaVectorStore();
+    }
+    
+    console.warn('Using Mock Vector Store (SQLite detected)');
+    return new MockVectorStore();
+  },
+};
 const AIProviderFactory = {
   provide: 'IAIService',
   useFactory: () => {
@@ -39,10 +55,7 @@ const AIProviderFactory = {
       useClass: PrismaPropertyRepository,
     },
     AIProviderFactory,
-    {
-      provide: 'IVectorStore',
-      useClass: MockVectorStore, // We will swap this later!
-    },
+    VectorStoreFactory,
     PrismaPropertyRepository,
   ],
   exports: [
