@@ -6,7 +6,8 @@ generator client {
 
 datasource db {
   provider = "sqlite" // Change this to "postgresql" via ENV in prod, or keep dynamic logic
-  
+  url      = env("DATABASE_URL")
+
 }
 
 model User {
