@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import {BullModule } from '@nestjs/bullmq';
 import { UserModule } from './infrastructure/ioc/user.module';
 import { PropertyModule } from './infrastructure/ioc/property.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -8,6 +9,12 @@ import { AIModule } from './infrastructure/ioc/ai.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT) || 6379,
+      },
+    }),
     AuthModule,
     UserModule,
     PropertyModule,

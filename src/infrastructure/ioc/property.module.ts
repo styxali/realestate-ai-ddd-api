@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
 import { CreatePropertyUseCase } from '../../application/use-cases/create-property.use-case';
 import { PrismaPropertyRepository } from '../persistence/repositories/prisma-property.repository';
 import { PropertyCreatedListener } from '../../application/listeners/property-created.listener';
@@ -9,7 +10,7 @@ import { ListPropertiesUseCase } from '../../application/use-cases/list-properti
 import { OpenAIService } from '../adapters/openai.service';
 import { GeminiService } from '../adapters/gemini.service';
 import { PrismaVectorStore } from '../persistence/repositories/prisma-vector-store';
-
+import { EmbeddingProcessor } from '../../application/jobs/embedding.processor'; 
 const VectorStoreFactory = {
   provide: 'IVectorStore',
   useFactory: () => {
@@ -45,11 +46,17 @@ const AIProviderFactory = {
   },
 };
 @Module({
+    imports: [
+    BullModule.registerQueue({
+      name: 'embedding-queue',
+    }),
+  ],
   controllers: [PropertyController],
   providers: [
     CreatePropertyUseCase,
     PropertyCreatedListener,
     ListPropertiesUseCase,
+    EmbeddingProcessor,
     {
       provide: 'IPropertyRepository',
       useClass: PrismaPropertyRepository,
@@ -62,7 +69,8 @@ const AIProviderFactory = {
     CreatePropertyUseCase, 
     ListPropertiesUseCase,
     'IAIService', 
-    'IVectorStore'
+    'IVectorStore',
+    BullModule,
 ],
 })
 export class PropertyModule {}
