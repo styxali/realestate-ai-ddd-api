@@ -19,5 +19,20 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  properties Property[] // Relation
+  
   @@map("users") // Best practice: lowercase table names in Postgres
+}
+
+model Property {
+  id          String   @id
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  title       String
+  description String
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("properties")
 }
