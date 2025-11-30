@@ -1,4 +1,12 @@
+export interface VectorSearchResult {
+  propertyId: string;
+  score: number;
+  content: string; // The text chunk we saved earlier
+}
+
 export interface IVectorStore {
   savePropertyVector(propertyId: string, vector: number[], content: string): Promise<void>;
-  // We will add search methods here later
+  
+  // New method:
+  search(queryVector: number[], limit: number): Promise<VectorSearchResult[]>;
 }

@@ -10,4 +10,8 @@ export class MockAIService implements IAIService {
     // Return a fake 1536-dimensional vector (standard OpenAI size)
     return Array(1536).fill(0).map(() => Math.random());
   }
+  async generateCompletion(prompt: string): Promise<string> {
+    this.logger.warn('Mock AI: Generating fake chat response');
+    return "Based on your listings, I found a Luxury Villa in Miami that matches your budget.";
+  }
 }

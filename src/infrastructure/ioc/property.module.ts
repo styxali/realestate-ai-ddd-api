@@ -11,7 +11,7 @@ import { ListPropertiesUseCase } from '../../application/use-cases/list-properti
   providers: [
     CreatePropertyUseCase,
     PropertyCreatedListener,
-    ListPropertiesUseCase, 
+    ListPropertiesUseCase,
     {
       provide: 'IPropertyRepository',
       useClass: PrismaPropertyRepository,
@@ -26,6 +26,11 @@ import { ListPropertiesUseCase } from '../../application/use-cases/list-properti
     },
     PrismaPropertyRepository,
   ],
-  exports: [CreatePropertyUseCase,ListPropertiesUseCase],
+  exports: [
+    CreatePropertyUseCase, 
+    ListPropertiesUseCase,
+    'IAIService', 
+    'IVectorStore'
+],
 })
 export class PropertyModule {}
