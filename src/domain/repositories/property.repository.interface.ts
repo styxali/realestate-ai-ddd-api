@@ -2,7 +2,6 @@ import { Property } from '../model/property';
 
 export interface IPropertyRepository {
   save(property: Property): Promise<void>;
-  findAll(): Promise<Property[]>;
+  findAll(filter?: { ownerId?: string }): Promise<Property[]>; // <--- CHANGED
   findById(id: string): Promise<Property | null>;
-  findByOwner(ownerId: string): Promise<Property[]>;
 }

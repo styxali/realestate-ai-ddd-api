@@ -5,11 +5,13 @@ import { PropertyCreatedListener } from '../../application/listeners/property-cr
 import { MockAIService } from '../adapters/mock-ai.service';
 import { MockVectorStore } from '../adapters/mock-vector-store';
 import { PropertyController } from '../controllers/property.controller';
+import { ListPropertiesUseCase } from '../../application/use-cases/list-properties.use-case';
 @Module({
   controllers: [PropertyController],
   providers: [
     CreatePropertyUseCase,
     PropertyCreatedListener,
+    ListPropertiesUseCase, 
     {
       provide: 'IPropertyRepository',
       useClass: PrismaPropertyRepository,
@@ -24,6 +26,6 @@ import { PropertyController } from '../controllers/property.controller';
     },
     PrismaPropertyRepository,
   ],
-  exports: [CreatePropertyUseCase],
+  exports: [CreatePropertyUseCase,ListPropertiesUseCase],
 })
 export class PropertyModule {}

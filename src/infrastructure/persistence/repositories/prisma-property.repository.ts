@@ -17,8 +17,13 @@ export class PrismaPropertyRepository implements IPropertyRepository {
     });
   }
 
-  async findAll(): Promise<Property[]> {
-    const raw = await this.prisma.property.findMany();
+  async findAll(filter?: { ownerId?: string }): Promise<Property[]> {
+    const whereClause = filter?.ownerId ? { ownerId: filter.ownerId } : {};
+
+    const raw = await this.prisma.property.findMany({
+      where: whereClause,
+      orderBy: { createdAt: 'desc' },
+    });
     return raw.map(PropertyMapper.toDomain);
   }
 
